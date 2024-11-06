@@ -1,33 +1,23 @@
-document.getElementById('buscar').addEventListener('click', function() {
-    const cidade = document.getElementById('cidade').value;  // Pega o valor digitado na caixa de texto
-    if (!cidade) {  // Se não houver cidade digitada
-        alert("Por favor, digite o nome de uma cidade!");
-        return;
+const apiKey = 'ae4665c61651d3876012dbe43ddf47de'; // Sua chave de API
+const cidade = 'São Paulo'; // Exemplo de cidade
+const baseURL = 'https://api.climatempo.com.br/api/v1/forecast/locale/';
+const localeId = '3477'; // ID da cidade (exemplo para São Paulo)
+
+const url = `${baseURL}${localeId}/current?token=${apiKey}`;
+
+fetch(url)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Erro na requisição de dados');
     }
-
-    const apiKey = '2fdd45761b80bfe5ccf7b7790d581431'; // Sua chave de API
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${apiKey}&units=metric&lang=pt_br`;
-
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            if (data.cod === 200) {  // Se a requisição for bem-sucedida
-                const nomeCidade = data.name;
-                const descricao = data.weather[0].description;
-                const temperatura = `${data.main.temp}°C`;
-                const umidade = `Umidade: ${data.main.humidity}%`;
-
-                // Exibe os dados no HTML
-                document.getElementById('nome-cidade').textContent = nomeCidade;
-                document.getElementById('descricao').textContent = descricao;
-                document.getElementById('temperatura').textContent = temperatura;
-                document.getElementById('umidade').textContent = umidade;
-            } else {
-                alert("Cidade não encontrada!");
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert("Erro ao buscar o clima.");
-        });
-});
+    return response.json(); // Converte a resposta em JSON
+  })
+  .then(data => {
+    console.log(data); // Exibe os dados de clima no console
+    // Aqui você pode processar os dados, como mostrar a temperatura:
+    const temperatura = data.data.temperature; // Exemplo de como acessar a temperatura
+    console.log(`Temperatura atual em ${cidade}: ${temperatura}°C`);
+  })
+  .catch(error => {
+    console.error('Erro ao buscar os dados:', error);
+  });
